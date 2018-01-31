@@ -9,8 +9,25 @@ class Question extends Component {
     newColor: new Animated.Value(0)
   }
 
+  validateAnswer = () => {
+    const { animatedColor, userAnswer } = this.state
+    const { answer, upScore, snapCard } = this.props
+    
+    if (userAnswer === answer) {
+      upScore()
+      return snapCard(alert(RIGHT_ANSWER))
+    }
+
+    snapCard(alert(WRONG_ANSWER(userAnswer, answer)))
+
+    this.setState({
+      genius: false,
+    })
+    return this.wrongAnswer()
+  }
+
   wrongAnswer = () => {
-    const { newColor } = this.props
+    const { newColor, snapCard } = this.props
     
     Animated.sequence([
       Animated.timing(newColor, {
@@ -24,10 +41,12 @@ class Question extends Component {
         toValue: 0
       })
     ]).start()
+
+    snapCard()
   }
 
   render() {
-    const { question, answer, userAnswer = '', newColor, validateAnswer } = this.props
+    const { question, answer, userAnswer = '', newColor } = this.props
     const AnimatedButton = Animated.createAnimatedComponent(TouchableOpacity)
     
     const backgroundColor = newColor.interpolate({
@@ -56,7 +75,7 @@ class Question extends Component {
         />
         <AnimatedButton
           style={[styles.blockButton, { backgroundColor: 'green' }]}
-          onPress={() => validateAnswer()}
+          onPress={() => this.validateAnswer()}
         >
           <Text style={styles.actions}>{'Answer!'}</Text>
         </AnimatedButton>

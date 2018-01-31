@@ -11,7 +11,7 @@ const Deck = (props) => {
         <ImageBackground
           imageStyle={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
           style={styles.cardCover}
-          source={{ uri: image }}
+          source={{ uri: image || 'http://hbspca.com/wp-content/plugins/spca-adoption/default/default-cat.jpg' }}
         >
         </ImageBackground>
       
