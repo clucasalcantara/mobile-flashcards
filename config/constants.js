@@ -4,7 +4,12 @@ export const EXIT_QUIZ = 'Leave Quiz'
 export const ADD_QUESTION = 'Add Question'
 export const CAROUSEL_HEIGHT = 420
 export const RIGHT_ANSWER = 'Yupi! You are right! Excelent job!'
-export const WRONG_ANSWER = (userAnswer, systemAnswer) => `Ops! You're wrong :(, You've answered ${userAnswer} and the correct answer is: ${systemAnswer}`
+export const WRONG_ANSWER = (userAnswer, systemAnswer) => 
+  `Ops! You're wrong :(, You've answered ${userAnswer} and the correct answer is: ${systemAnswer}`
+export const FINISH_QUIZ = (score, quizSize) => {
+  const formatedScore = ((score / quizSize) * 100).toFixed(2)
+  return `You've finished the quiz and have an accuracy around ${formatedScore}% !!`
+}
 export const SEED_CARDS = [
     {
       UID: 0,
