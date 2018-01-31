@@ -4,42 +4,44 @@ import Carousel from 'react-native-snap-carousel'
 
 import Question from '../../shared/Question'
 import { MAIN_BG } from '../../../config/colors'
-import { CAROUSEL_HEIGHT, EXIT_QUIZ } from '../../../config/constants'
+import { CAROUSEL_HEIGHT, EXIT_QUIZ, FINISH_QUIZ, WRONG_ANSWER, RIGHT_ANSWER } from '../../../config/constants'
 
 const { width, height } = Dimensions.get('window')
 
 class Quiz extends PureComponent {
   state = {
+    score: 0,
     ended: false,
     genius: null,
     userAnswer: '',
     newColor: new Animated.Value(0)
   }
 
-  validateAnswer = () => {
-    const { animatedColor, userAnswer } = this.state
-    const { answer } = this.props
-    if (userAnswer === answer) {
-      return alert(RIGHT_ANSWER)
+  snapCard = (callback = () => {}) => {
+    const { score } = this.state
+    const quizSize = this._carousel._getCustomDataLength() - 1
+    const step = this._carousel._activeItem
+
+    if (step === quizSize) {
+      AsyncStorage.setItem('finishedQuiz', new Date().getTime())
+      return alert(FINISH_QUIZ(score, quizSize))
     }
-
-    alert(WRONG_ANSWER(userAnswer, answer))
-
-    this.setState({
-      genius: false,
-    })
-    return this.wrongAnswer()
+    
+    callback()
+    this._carousel.snapToNext()
   }
+  
+  upScore = () => this.setState({ score: this.state.score + 1 })
 
   renderCarouselItem = ({ item, index }) => {
-    // const navigateToDeck = () => navigation.navigate('Detail', { ...decks[index], UID: index })
-
     return (
       <Question
         {...this.state}
         {...item}
         key={index}
         onPress={() => {}}
+        snapCard={this.snapCard}
+        upScore={this.upScore}
       />
     )
   }
@@ -48,7 +50,7 @@ class Quiz extends PureComponent {
     const { navigation = {} } = this.props
     const { params = {} } = navigation.state
     const { questions = [] } = params
-    const { ended } = this.state
+    const { ended, score } = this.state
 
     return(
       <View style={styles.container}>
