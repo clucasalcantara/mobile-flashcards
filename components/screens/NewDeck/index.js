@@ -37,6 +37,7 @@ class NewDeck extends Component {
     }
 
     this.setState({
+      appDecks,
       newDeck
     })
     
@@ -47,6 +48,18 @@ class NewDeck extends Component {
     newDeck.name = name
 
     this.setState({ newDeck })
+  }
+
+  addDeck = async () => {
+    const { appDecks, newDeck } = this.state
+    const { navigation } = this.props
+    try {
+      appDecks.push(newDeck)
+      await AsyncStorage.setItem('myDecks', JSON.stringify(appDecks))
+      navigation.navigate('Home', { decks: appDecks })
+    } catch (error) {
+      throw new Error(error)
+    }
   }
 
   setDeckImage = async () => {
