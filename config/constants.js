@@ -17,12 +17,12 @@ export const SEED_CARDS = [
       image: 'http://www.oceancare.org/wp-content/uploads/2017/07/GreenTurtle_SteveBloomImages-_AlamyStockPhoto.jpg',
       questions: [
         {
-          question: 'WTF?',
-          answer: 'fodase'
+          question: 'What is the largest fish in the world?',
+          answer: 'Whale Shark'
         },
         {
-          question: 'WTF?',
-          answer: 'fodase'
+          question: 'Why I was wrong?',
+          answer: 'Blue Whale is not a fish'
         },
       ],
     },
@@ -32,8 +32,8 @@ export const SEED_CARDS = [
       image: 'https://oryza.com/sites/default/files/field/image/150519tanzania.jpg',
       questions: [
         {
-          question: 'WTF?',
-          answer: 'fodase'
+          question: 'How much weight an elephant can reach?',
+          answer: '2.000 kg'
         },
       ],
     },
@@ -43,16 +43,16 @@ export const SEED_CARDS = [
       image: 'http://cuteoverload.wordpress.com/files/18289249_610ad8f362-3655-1.jpg',
       questions: [
         {
-          question: 'WTF?',
-          answer: 'fodase'
+          question: 'Do you like cats?',
+          answer: 'yes'
         },
         {
-          question: 'WTF?',
-          answer: 'fodase'
+          question: 'Do you like dogs?',
+          answer: 'yes'
         },
         {
-          question: 'WTF?',
-          answer: 'fodase'
+          question: 'Do you like puppies?',
+          answer: 'yes'
         },
       ]
     }
