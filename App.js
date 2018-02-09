@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, StatusBar } from 'react-native'
+import { AsyncStorage, View, StatusBar } from 'react-native'
 import { Notifications, Permissions, Constants } from 'expo'
 import moment from 'moment'
 
@@ -15,7 +15,7 @@ export default class App extends Component {
   }
 
   scheduleNotification = async () => {
-    const finished = !!await AsyncStora.getItem('finishedQuiz')
+    const finished = !!await AsyncStorage.getItem('finishedQuiz')
     const localNotification = {
       title: 'Hey! Come back to study!',
       body: 'We are missing you, please come back soon :(',

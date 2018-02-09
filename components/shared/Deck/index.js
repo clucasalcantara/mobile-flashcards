@@ -6,7 +6,7 @@ const Deck = (props) => {
   const { id, name, questions, image, onPress } = props
 
   return (
-    <TouchableHighlight onPress={() => onPress(id)}>
+    <TouchableHighlight onPress={() => onPress(id, name)}>
       <View style={styles.deck}>
         <ImageBackground
           imageStyle={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}

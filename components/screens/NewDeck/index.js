@@ -56,7 +56,7 @@ class NewDeck extends Component {
     try {
       appDecks.push(newDeck)
       await AsyncStorage.setItem('myDecks', JSON.stringify(appDecks))
-      navigation.navigate('Home', { decks: appDecks })
+      navigation.navigate('Detail', { ...newDeck, UID: newDeck.id })
     } catch (error) {
       throw new Error(error)
     }

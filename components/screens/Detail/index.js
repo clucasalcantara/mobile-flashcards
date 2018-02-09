@@ -32,12 +32,18 @@ const Detail = ({ navigation }) => {
         <Text style={styles.deckSize}> {`${questions.length} quiz ${questions.length > 1 ? 'cards' : 'card'}`}</Text>
       </View>
       <View style={styles.buttonsWrapper}>
-        <TouchableOpacity
+        {questions.length > 0 && <TouchableOpacity
           style={[styles.blockButton, { backgroundColor: 'green'}]}
           onPress={() => navigation.navigate('Quiz', { name, questions })}
         >
           <Text style={styles.actions}>{START_QUIZ}</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>}
+        {questions.length == 0 && <TouchableOpacity
+          style={[styles.blockButton, { backgroundColor: 'green' }]}
+          onPress={() => navigation.navigate('Home')}
+        >
+          <Text style={styles.actions}>{'BACK HOME'}</Text>
+        </TouchableOpacity>}
         <TouchableOpacity
           style={[styles.blockButton, { backgroundColor: 'purple'}]}
           onPress={() => navigation.navigate('NewQuestion', { UID })}

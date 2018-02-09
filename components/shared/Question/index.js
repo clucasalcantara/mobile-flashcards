@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { Text, TextInput, View, StyleSheet, TouchableOpacity, Animated } from 'react-native'
-import { RIGHT_ANSWER, WRONG_ANSWER } from '../../../config/constants'
+import { NavigationActions } from 'react-navigation'
+
+import { RIGHT_ANSWER, WRONG_ANSWER, FINISH_QUIZ} from '../../../config/constants'
+
 
 class Question extends Component {
   state = {
@@ -11,24 +14,52 @@ class Question extends Component {
 
   validateAnswer = () => {
     const { animatedColor, userAnswer } = this.state
-    const { answer, upScore, snapCard } = this.props
+    const { 
+      answer, 
+      upScore, 
+      snapCard,
+      position,
+      quizSize,
+      score,
+      navigation,
+      questions,
+      name,
+    } = this.props
+    const ended = quizSize === position
     
-    if (userAnswer === answer) {
-      upScore()
-      return snapCard(alert(RIGHT_ANSWER))
-    }
+    if (!ended) {
+      if (userAnswer === answer) {
+        upScore(position)
+        return snapCard(alert(RIGHT_ANSWER))
+      } else {
+        this.setState({
+          genius: false,
+        })
+        this.wrongAnswer()
+        return snapCard(alert(WRONG_ANSWER(userAnswer, answer)))
+      }      
+    } else {
+      if (userAnswer === answer) {
+        upScore(position)
+        return snapCard(alert(RIGHT_ANSWER))
+      } else {
+        this.setState({
+          genius: false,
+        })
+        this.wrongAnswer()
+        alert(WRONG_ANSWER(userAnswer, answer))
+        alert(FINISH_QUIZ(score, quizSize))
+      }      
+    }    
 
-    snapCard(alert(WRONG_ANSWER(userAnswer, answer)))
-
-    this.setState({
-      genius: false,
-    })
-    return this.wrongAnswer()
+    return FINISH_QUIZ(score, quizSize)
   }
 
   wrongAnswer = () => {
-    const { newColor, snapCard } = this.props
+    const { newColor, snapCard, quizSize, score, position } = this.props
     
+    if ((quizSize === position) || (quizSize < position)) return FINISH_QUIZ(score, quizSize)
+
     Animated.sequence([
       Animated.timing(newColor, {
         delay: 500,
@@ -41,11 +72,10 @@ class Question extends Component {
         toValue: 0
       })
     ]).start()
-
-    snapCard()
   }
 
   render() {
+    console.log(this.props)
     const { question, answer, userAnswer = '', newColor } = this.props
     const AnimatedButton = Animated.createAnimatedComponent(TouchableOpacity)
     
