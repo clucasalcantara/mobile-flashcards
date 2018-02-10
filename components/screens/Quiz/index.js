@@ -66,6 +66,8 @@ class Quiz extends PureComponent {
     const { params = {} } = navigation.state
     const { questions = [] } = params
     const { ended } = this.state
+    // hijack to one question decks :P
+    if (questions.length === 1) this.setState({ ended })
 
     return typeof step === 'string'
       ? step : `question ${step} of ${questions.length} ${questions.length > 1 ? 'questions' : 'question'}`

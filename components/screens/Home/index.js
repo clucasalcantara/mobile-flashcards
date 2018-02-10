@@ -57,6 +57,8 @@ export default class Home extends Component {
     )
   }
 
+  shouldComponentUpdate = (nextState, nextProps) => nextProps.decks.length > this.state.decks.length
+
   render() {
     const { decks = [] } = this.state
     

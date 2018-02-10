@@ -1,7 +1,8 @@
+export const ADD_QUESTION = 'Add Question'
 export const APP_HEADLINE = 'Choose a deck to start the Quiz!'
+export const DEFAULT_IMAGE = 'http://www.tv.appm.pt/wp-content/themes/invictus_3.3.2/images/dummy-image.jpg'
 export const START_QUIZ = 'Start Quiz'
 export const EXIT_QUIZ = 'Leave Quiz'
-export const ADD_QUESTION = 'Add Question'
 export const CAROUSEL_HEIGHT = 420
 export const RIGHT_ANSWER = 'Yupi! You are right! Excelent job!'
 export const WRONG_ANSWER = (userAnswer, systemAnswer) => 

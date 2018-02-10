@@ -8,6 +8,7 @@ import {
   StyleSheet
 } from 'react-native'
 import { NavigationActions } from 'react-navigation'
+import { AppLoading } from 'expo'
 
 const navigateAction = key => NavigationActions.navigate({
   routeName: 'NewQuestion',
@@ -20,6 +21,14 @@ class NewQuestion extends Component {
     question: null,
     answer: null
   }
+
+  componentWillMount = () => (
+    <AppLoading
+      startAsync={this._getAsyncDecks}
+      onFinish={() => this.setState({ isReady: true })}
+      onError={console.warn}
+    />
+  )
 
   addNewQuestion = (UID, newQuestion, appDecks) => {
     const { navigation } = this.props
@@ -38,20 +47,12 @@ class NewQuestion extends Component {
       const newDecks = appDecks.filter(deck => deck.UID === UID ? deckWithNewQuestion : deck)
       AsyncStorage.setItem('myDecks', JSON.stringify(newDecks))
 
-      const resetAction = NavigationActions.reset({
-        index: 0,
-        actions: [
-          NavigationActions.navigate({ routeName: 'Home' })
-        ]
-      })
-      
-      navigation.dispatch(resetAction)
+      navigation.navigate('Detail', { ...appDecks[UID], UID })
     }
   }
 
   asyncAddQuestion = async (question, answer, UID) => {
-    const storageDecks = await AsyncStorage.getItem('myDecks').then(decks => decks )
-    const appDecks = JSON.parse(storageDecks)
+    const { appDecks } = this.state
 
     const currentDeck = appDecks.filter(deck => UID === deck.UID)
     const newDeck = Object.assign(
@@ -71,13 +72,26 @@ class NewQuestion extends Component {
     }
   }
 
+  _getAsyncDecks = async () => {
+    const appDecks = await AsyncStorage.getItem('myDecks')
+    this.setState({ appDecks: JSON.parse(appDecks) })
+  }
+
   render() {
     const { navigation } = this.props
     const { state } = navigation
     const { UID } = state.params
+    const { isReady } = this.state
     
     return (
       <View style={{ padding: 20, flex: 1, justifyContent: 'space-between' }}>
+        {!isReady && 
+          <AppLoading
+            startAsync={this._getAsyncDecks}
+            onFinish={() => this.setState({ isReady })}
+            onError={console.warn}
+          />
+        }
         <View>
           <View>
             <Text>Question: </Text>

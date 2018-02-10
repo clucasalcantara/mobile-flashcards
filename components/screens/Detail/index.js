@@ -9,13 +9,14 @@ import {
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
-import { START_QUIZ, ADD_QUESTION } from '../../../config/constants'
+import { START_QUIZ, ADD_QUESTION, DEFAULT_IMAGE } from '../../../config/constants'
 
 const { width } = Dimensions.get('window')
 
 const Detail = ({ navigation }) => {
   const { UID, name, questions, image } = navigation.state.params
-  console.log('Deck UID', navigation.state.params)
+  const background = image !== '' ? image : DEFAULT_IMAGE
+  
   return (
     <View>
       <ImageBackground
@@ -24,7 +25,7 @@ const Detail = ({ navigation }) => {
           width,
           height: 200
         }}
-        source={{ uri: image }}
+        source={{ uri: background }}
       />
       <Text style={styles.deckName}>{`${name}'s Deck`}</Text>
       <View style={styles.deckCardsCount}>
