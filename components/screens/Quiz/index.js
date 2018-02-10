@@ -31,6 +31,15 @@ class Quiz extends PureComponent {
     newColor: new Animated.Value(0)
   }
 
+  componentWillMount = () => {
+    const { navigation = {} } = this.props
+    const { params = {}, name } = navigation.state
+    const { questions = [] } = params
+
+    // hijack to one question decks :P
+    if (questions.length === 1) this.setState({ ended: true })
+  }
+
   snapCard = (callback = () => { }, ended) => {
     const { score } = this.state
     const quizSize = this._carousel._getCustomDataLength() - 1
@@ -66,12 +75,9 @@ class Quiz extends PureComponent {
     const { params = {} } = navigation.state
     const { questions = [] } = params
     const { ended } = this.state
-    // hijack to one question decks :P
-    if (questions.length === 1) this.setState({ ended })
 
     return typeof step === 'string'
       ? step : `question ${step} of ${questions.length} ${questions.length > 1 ? 'questions' : 'question'}`
-
   }
 
   renderCarouselItem = ({ item, index }) => {
