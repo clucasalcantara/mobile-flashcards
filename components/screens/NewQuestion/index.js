@@ -30,40 +30,44 @@ class NewQuestion extends Component {
     />
   )
 
-  addNewQuestion = (UID, newQuestion, appDecks) => {
+  addNewQuestion = async (UID, newQuestion) => {
     const { navigation } = this.props
-    const oldSize = appDecks[UID].questions.length
+    const appDecks = JSON.parse(await AsyncStorage.getItem('myDecks'))
+    const deckUID = UID - 1
+
+    const oldSize = appDecks[deckUID].questions.length
+
     
-    if (appDecks[UID]) {
-      appDecks[UID].questions.push(newQuestion)
+    if (appDecks[deckUID]) {
+      appDecks[deckUID].questions.push(newQuestion)
     }
 
-    const { id, name, questions, image } = appDecks[UID]
+    const { id, name, questions, image } = appDecks[deckUID]
 
-    if (appDecks[UID].questions.length > oldSize) {
-      const deckWithNewQuestion = appDecks[UID]
-      const deckToUpdate = appDecks.filter(deck => deck.UID = id)
+    if (appDecks[deckUID].questions.length > oldSize) {
+      const deckWithNewQuestion = appDecks[deckUID]
+      const deckToUpdate = appDecks.filter(deck => deck.deckUID = id)
       
-      const newDecks = appDecks.filter(deck => deck.UID === UID ? deckWithNewQuestion : deck)
+      const newDecks = appDecks.filter(deck => deck.deckUID === deckUID ? deckWithNewQuestion : deck)
       AsyncStorage.setItem('myDecks', JSON.stringify(newDecks))
 
-      navigation.navigate('Detail', { ...appDecks[UID], UID })
+      navigation.navigate('Detail', { ...appDecks[deckUID], deckUID })
     }
   }
 
   asyncAddQuestion = async (question, answer, UID) => {
-    const { appDecks } = this.state
-
+    const appDecks = JSON.parse(await AsyncStorage.getItem('myDecks'))
     const currentDeck = appDecks.filter(deck => UID === deck.UID)
-    const newDeck = Object.assign(
-      {}, 
-      currentDeck,
-      this.addNewQuestion(UID, { question, answer }, appDecks)
-    )
+    const newQuestion = this.addNewQuestion(UID, { question, answer }, appDecks)
+    
+    const newDeck = {
+      ...currentDeck,
+      newQuestion
+    }
   }
-  
+
   addQuestion = ({ question, answer }) => {
-    const { navigation  } = this.props
+    const { navigation } = this.props
     const { state } = navigation
     const { UID } = state.params
 
