@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, Animated } from 'react-native'
+import { Button, Text, TextInput, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { NavigationActions } from 'react-navigation'
+import { RkButton, RkChoiceGroup, RkChoice } from 'react-native-ui-kitten'
 
 import { RIGHT_ANSWER, WRONG_ANSWER, FINISH_QUIZ} from '../../../config/constants'
 
@@ -9,14 +10,16 @@ class Question extends Component {
   state = {
     genius: null,
     userAnswer: '',
-    newColor: new Animated.Value(0)
+    localScore: 0,
   }
 
   validateAnswer = () => {
-    const { animatedColor, userAnswer } = this.state
+    const { animatedColor, userAnswer, localScore } = this.state
     const { 
-      answer, 
+      answers, 
+      rightAnswer, 
       upScore, 
+      noScore, 
       snapCard,
       position,
       quizSize,
@@ -28,88 +31,53 @@ class Question extends Component {
     const ended = quizSize === position
     
     if (!ended) {
-      if (userAnswer === answer) {
+      if (answers[userAnswer] === rightAnswer) {
         upScore(position)
         return snapCard(alert(RIGHT_ANSWER))
       } else {
-        this.setState({
-          genius: false,
-        })
-        this.wrongAnswer()
-        return snapCard(alert(WRONG_ANSWER(userAnswer, answer)))
+        noScore(position)
+        return snapCard(alert(WRONG_ANSWER(answers[userAnswer], rightAnswer)))
       }      
-    } else {
-      if (userAnswer === answer) {
-        upScore(position)
-        return snapCard(alert(RIGHT_ANSWER))
-      } else {
-        this.setState({
-          genius: false,
-        })
-        this.wrongAnswer()
-        alert(WRONG_ANSWER(userAnswer, answer))
-        alert(FINISH_QUIZ(score, quizSize))
-      }      
-    }    
-
-    return FINISH_QUIZ(score, quizSize)
-  }
-
-  wrongAnswer = () => {
-    const { newColor, snapCard, quizSize, score, position } = this.props
+    } 
     
-    if ((quizSize === position) || (quizSize < position)) return FINISH_QUIZ(score, quizSize)
-
-    Animated.sequence([
-      Animated.timing(newColor, {
-        delay: 500,
-        duration: 500,
-        toValue: 1
-      }),
-      Animated.timing(newColor, {
-        delay: 1500,
-        duration: 500,
-        toValue: 0
-      })
-    ]).start()
+    if (answers[userAnswer] === rightAnswer) {
+      upScore(position)
+      return snapCard(alert(RIGHT_ANSWER))
+    } else {
+      noScore(position)
+      alert(WRONG_ANSWER(answers[userAnswer], rightAnswer))
+      return snapCard(alert(FINISH_QUIZ(localScore, quizSize)))
+    }      
   }
 
   render() {
-    console.log(this.props)
-    const { question, answer, userAnswer = '', newColor } = this.props
-    const AnimatedButton = Animated.createAnimatedComponent(TouchableOpacity)
-    
-    const backgroundColor = newColor.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['white', 'darkred']
-    })
-
-    const textColor = newColor.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['black', 'white']
-    })
+    const { question, rightAnswer, answers } = this.props
     
     return(
-      <Animated.View style={[styles.questionBox, { backgroundColor }]}>
-        <Animated.Text style={[styles.question, { color: textColor }]}>{question}</Animated.Text>
-        <TextInput
-          style={{
-            height: 40,
-            width: 280,
-            borderColor: 'gray',
-            borderWidth: 1,
-            paddingLeft: 10
-          }}
-          onChangeText={(answer) => this.setState({ userAnswer: answer })}
-          placeholder='Type your answer'
-        />
-        <AnimatedButton
+      <View style={styles.questionBox}>
+        <Text style={styles.question}>{question}</Text>
+        <Text>Choose your option</Text>
+        <RkChoiceGroup
+          style={{ padding: 10 }}
+          onChange={(index) => this.setState({ userAnswer: index })}
+          radio>
+          {
+            answers.map((option, index) => (
+              <TouchableOpacity key={`option-${index}`} choiceTrigger>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <RkChoice style={{ margin: 10 }} rkType='radio' />
+                  <Text>{option}</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          }
+        </RkChoiceGroup>
+        <RkButton
           style={[styles.blockButton, { backgroundColor: 'green' }]}
-          onPress={() => this.validateAnswer()}
-        >
-          <Text style={styles.actions}>{'Answer!'}</Text>
-        </AnimatedButton>
-      </Animated.View>
+          onPress={() => this.validateAnswer()}>
+          <Text style={styles.actions}>{'Answer!! :)'}</Text>
+        </RkButton>
+      </View>
     )
   }
 }
@@ -120,7 +88,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: 300,
-    height: 180,
+    height: 350,
     backgroundColor: 'white',
     borderRadius: 10,
     shadowColor: 'rgba(0,0,0,0.25)',

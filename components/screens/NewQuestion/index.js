@@ -19,7 +19,8 @@ const navigateAction = key => NavigationActions.navigate({
 class NewQuestion extends Component {
   state = {
     question: null,
-    answer: null
+    answers: [],
+    rightAnswer: null
   }
 
   componentWillMount = () => (
@@ -33,32 +34,28 @@ class NewQuestion extends Component {
   addNewQuestion = async (UID, newQuestion) => {
     const { navigation } = this.props
     const appDecks = JSON.parse(await AsyncStorage.getItem('myDecks'))
-    const deckUID = UID - 1
+    const oldSize = appDecks[UID].questions.length
+    const { id, name, questions, image } = appDecks[UID]
 
-    const oldSize = appDecks[deckUID].questions.length
-
-    
-    if (appDecks[deckUID]) {
-      appDecks[deckUID].questions.push(newQuestion)
+    if (appDecks[UID]) {
+      appDecks[UID].questions.push(newQuestion)
     }
 
-    const { id, name, questions, image } = appDecks[deckUID]
-
-    if (appDecks[deckUID].questions.length > oldSize) {
-      const deckWithNewQuestion = appDecks[deckUID]
-      const deckToUpdate = appDecks.filter(deck => deck.deckUID = id)
+    if (appDecks[UID].questions.length > oldSize) {
+      const deckWithNewQuestion = appDecks[UID]
+      const deckToUpdate = appDecks.filter(deck => deck.UID = id)
+      const newDecks = appDecks.filter(deck => deck.UID === UID ? deckWithNewQuestion : deck)
       
-      const newDecks = appDecks.filter(deck => deck.deckUID === deckUID ? deckWithNewQuestion : deck)
       AsyncStorage.setItem('myDecks', JSON.stringify(newDecks))
-
-      navigation.navigate('Detail', { ...appDecks[deckUID], deckUID })
+      
+      navigation.navigate('Detail', { ...appDecks[UID], UID })
     }
   }
 
-  asyncAddQuestion = async (question, answer, UID) => {
+  asyncAddQuestion = async (question, rightAnswer, answers, UID) => {
     const appDecks = JSON.parse(await AsyncStorage.getItem('myDecks'))
     const currentDeck = appDecks.filter(deck => UID === deck.UID)
-    const newQuestion = this.addNewQuestion(UID, { question, answer }, appDecks)
+    const newQuestion = this.addNewQuestion(UID, { question, rightAnswer, answers }, appDecks)
     
     const newDeck = {
       ...currentDeck,
@@ -66,19 +63,26 @@ class NewQuestion extends Component {
     }
   }
 
-  addQuestion = ({ question, answer }) => {
+  addQuestion = ({ question, rightAnswer, answers }) => {
     const { navigation } = this.props
     const { state } = navigation
     const { UID } = state.params
 
-    if (question, answer) {
-      this.asyncAddQuestion(question, answer, UID)
+    if (question, rightAnswer, answers) {
+      this.asyncAddQuestion(question, rightAnswer, answers, UID)
     }
   }
 
   _getAsyncDecks = async () => {
     const appDecks = await AsyncStorage.getItem('myDecks')
     this.setState({ appDecks: JSON.parse(appDecks) })
+  }
+  
+  addChoice = (index, choice) => {
+    const { answers } = this.state
+    answers[index] = choice
+
+    this.setState({ answers })
   }
 
   render() {
@@ -111,7 +115,7 @@ class NewQuestion extends Component {
             />
           </View>
           <View style={{ marginTop: 10 }}>
-            <Text>Answer: </Text>
+            <Text>Right Answer: </Text>
             <TextInput
               style={{ 
                 height: 40, 
@@ -119,8 +123,47 @@ class NewQuestion extends Component {
                 borderWidth: 1,
                 paddingLeft: 10,
               }}
-              onChangeText={(answer) => this.setState({ answer })}
+              onChangeText={(rightAnswer) => this.setState({ rightAnswer })}
               placeholder='Type your answer'
+            />
+          </View>
+          <View>
+            <Text>Option 1: </Text>
+            <TextInput
+              style={{ 
+                height: 40, 
+                borderColor: 'gray', 
+                borderWidth: 1,
+                paddingLeft: 10,
+              }}
+              onChangeText={(option1) => this.addChoice(0, option1)}
+              placeholder='Type your option'
+            />
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Text>Option 2: </Text>
+            <TextInput
+              style={{ 
+                height: 40, 
+                borderColor: 'gray', 
+                borderWidth: 1,
+                paddingLeft: 10,
+              }}
+              onChangeText={(option2) => this.addChoice(1, option2)}
+              placeholder='Type your option'
+            />
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Text>Option 3: </Text>
+            <TextInput
+              style={{ 
+                height: 40, 
+                borderColor: 'gray', 
+                borderWidth: 1,
+                paddingLeft: 10,
+              }}
+              onChangeText={(option3) => this.addChoice(2, option3)}
+              placeholder='Type your option'
             />
           </View>
         </View>

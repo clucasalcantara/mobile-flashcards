@@ -62,12 +62,23 @@ class Quiz extends PureComponent {
     const localScore = score + 1
 
     if (step === quizSize) {
-      this.setState({ ended: true })
+      this.setState({ score: localScore, ended: true })
       return alert(FINISH_QUIZ(localScore, quizSize))
     }
     
     this.setState({ score: localScore })
 
+  }
+
+  noScore = () => {
+    const quizSize = this._carousel._getCustomDataLength() - 1
+    const step = this._carousel._activeItem
+    const { score } = this.state
+
+    if (step === quizSize) {
+      this.setState({ ended: true })
+      return alert(FINISH_QUIZ(score, quizSize))
+    }
   }
 
   getQuestionsCount = (step) => {
@@ -81,6 +92,7 @@ class Quiz extends PureComponent {
   }
 
   renderCarouselItem = ({ item, index }) => {
+    const { score } = this.state
     const quizSize = this._carousel._getCustomDataLength() - 1
     const { navigation = {} } = this.props
     const { params = {}, name } = navigation.state
@@ -94,10 +106,12 @@ class Quiz extends PureComponent {
         position={index}
         snapCard={this.snapCard}
         upScore={this.upScore}
+        noScore={this.noScore}
         quizSize={quizSize}
         questions={questions}
         navigation={navigation}
         name={name}
+        score={score}
       />
     )
   }
@@ -156,7 +170,7 @@ const styles = StyleSheet.create({
   },
   carouselRow: {
     display: 'flex',
-    height: 280,
+    height: 350,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 50

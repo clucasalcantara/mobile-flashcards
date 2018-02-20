@@ -19,11 +19,12 @@ export const SEED_CARDS = [
       questions: [
         {
           question: 'What is the largest fish in the world?',
-          answer: 'Whale Shark'
-        },
-        {
-          question: 'Why I was wrong?',
-          answer: 'Blue Whale is not a fish'
+          rightAnswer: 'Whale Shark',
+          answers: [
+            'Whale Shark',
+            'Jesus',
+            'Judas'
+          ]
         },
       ],
     },
@@ -34,7 +35,12 @@ export const SEED_CARDS = [
       questions: [
         {
           question: 'How much weight an elephant can reach?',
-          answer: '2.000 kg'
+          rightAnswer: '2.00kg',
+          answers: [
+            '2.000 kg',
+            '2.000 kg',
+            '2.000 kg',
+          ]
         },
       ],
     },
@@ -45,15 +51,30 @@ export const SEED_CARDS = [
       questions: [
         {
           question: 'Do you like cats?',
-          answer: 'yes'
+          rightAnswer: 'yes',
+          answers: [
+            'yes',
+            'yes',
+            'yes',
+          ]
         },
         {
           question: 'Do you like dogs?',
-          answer: 'yes'
+          rightAnswer: 'yes',
+          answers: [
+            'yes',
+            'yes',
+            'yes',
+          ]
         },
         {
           question: 'Do you like puppies?',
-          answer: 'yes'
+          rightAnswer: 'yes',
+          answers: [
+            'yes',
+            'yes',
+            'yes',
+          ]
         },
       ]
     }
