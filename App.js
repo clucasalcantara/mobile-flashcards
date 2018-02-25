@@ -3,7 +3,7 @@ import { AsyncStorage, View, StatusBar } from 'react-native'
 import { Notifications, Permissions, Constants } from 'expo'
 import moment from 'moment'
 
-import { MainNavigator } from './config/navigation'
+import { MainNavigator } from './src/config/navigation'
 
 export default class App extends Component {
   async componentDidMount() {

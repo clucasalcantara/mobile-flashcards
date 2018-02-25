@@ -31,24 +31,29 @@ class NewQuestion extends Component {
     />
   )
 
-  addNewQuestion = async (UID, newQuestion) => {
+  addNewQuestion = async (UID, newQuestion, appDecks) => {
+    // To Do: Fix the yellowBox warning about questions of undefinded
+    console.log(UID)
+    console.log(appDecks)
     const { navigation } = this.props
-    const appDecks = JSON.parse(await AsyncStorage.getItem('myDecks'))
-    const oldSize = appDecks[UID].questions.length
-    const { id, name, questions, image } = appDecks[UID]
+    const deck = appDecks[UID - 1]
+    console.log('Here', deck)
 
-    if (appDecks[UID]) {
-      appDecks[UID].questions.push(newQuestion)
+    const oldSize = deck.questions.length
+    const { deckUID, name, questions, image } = appDecks[UID - 1]
+
+    if (deck) {
+      deck.questions.push(newQuestion)
     }
 
-    if (appDecks[UID].questions.length > oldSize) {
-      const deckWithNewQuestion = appDecks[UID]
-      const deckToUpdate = appDecks.filter(deck => deck.UID = id)
+    if (deck.questions.length > oldSize) {
+      const deckWithNewQuestion = deck
+      const deckToUpdate = appDecks.filter(deck => deck.UID = deckUID)
       const newDecks = appDecks.filter(deck => deck.UID === UID ? deckWithNewQuestion : deck)
       
       AsyncStorage.setItem('myDecks', JSON.stringify(newDecks))
       
-      navigation.navigate('Detail', { ...appDecks[UID], UID })
+      navigation.navigate('Detail', { ...deck, UID })
     }
   }
 
