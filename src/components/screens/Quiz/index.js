@@ -55,15 +55,15 @@ class Quiz extends PureComponent {
     this._carousel.snapToNext()
   }
 
-  upScore = () => {
+  upScore = (position) => {
     const quizSize = this._carousel._getCustomDataLength() - 1
     const step = this._carousel._activeItem
     const { score } = this.state
     const localScore = score + 1
 
-    if (step === quizSize) {
+    if (position === quizSize) {
+      alert(FINISH_QUIZ(localScore, quizSize))
       this.setState({ score: localScore, ended: true })
-      return alert(FINISH_QUIZ(localScore, quizSize))
     }
     
     this.setState({ score: localScore })
@@ -120,7 +120,7 @@ class Quiz extends PureComponent {
     const { navigation = {} } = this.props
     const { params = {} } = navigation.state
     const { questions = [], name } = params
-    const { ended, score, step } = this.state
+    const { score, step } = this.state
 
     return (
       <View style={styles.container}>
@@ -138,22 +138,20 @@ class Quiz extends PureComponent {
             inactiveSlideScale={0.8}
           />
         </View>
-        {ended &&
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <TouchableOpacity
-              style={[styles.blockButton, { backgroundColor: 'green' }]}
-              onPress={() => navigation.navigate('Quiz', { questions, name: `${name}` })}
-            >
-              <Text style={styles.actions}>{'Restart Quiz'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.blockButton, { backgroundColor: 'purple' }]}
-              onPress={() => navigation.navigate('Home')}
-            >
-              <Text style={styles.actions}>{EXIT_QUIZ}</Text>
-            </TouchableOpacity>
-          </View>
-        }
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <TouchableOpacity
+            style={[styles.blockButton, { backgroundColor: 'green' }]}
+            onPress={() => navigation.navigate('Quiz', { questions, name: `${name}` })}
+          >
+            <Text style={styles.actions}>{'Restart Quiz'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.blockButton, { backgroundColor: 'purple' }]}
+            onPress={() => navigation.navigate('Home')}
+          >
+            <Text style={styles.actions}>{EXIT_QUIZ}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     )
   }

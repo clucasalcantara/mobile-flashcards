@@ -28,7 +28,7 @@ class Question extends Component {
       questions,
       name,
     } = this.props
-    const ended = quizSize === position
+    const ended = quizSize === position - 1
     
     if (!ended) {
       if (answers[userAnswer] === rightAnswer) {
