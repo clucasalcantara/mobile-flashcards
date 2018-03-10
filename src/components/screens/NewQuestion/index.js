@@ -32,12 +32,8 @@ class NewQuestion extends Component {
   )
 
   addNewQuestion = async (UID, newQuestion, appDecks) => {
-    // To Do: Fix the yellowBox warning about questions of undefinded
-    console.log(UID)
-    console.log(appDecks)
     const { navigation } = this.props
     const deck = appDecks[UID - 1]
-    console.log('Here', deck)
 
     const oldSize = deck.questions.length
     const { deckUID, name, questions, image } = appDecks[UID - 1]
