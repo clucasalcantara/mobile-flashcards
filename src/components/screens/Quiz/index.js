@@ -26,9 +26,7 @@ class Quiz extends PureComponent {
     score: 0,
     step: 1,
     ended: false,
-    genius: null,
     userAnswer: '',
-    newColor: new Animated.Value(0)
   }
 
   componentWillMount = () => {
@@ -46,9 +44,9 @@ class Quiz extends PureComponent {
     const step = this._carousel._activeItem
     userSteps = this.state.step
     this.setState({
-      step: (typeof userSteps !== 'string' && userSteps !== quizSize) 
+      step: (typeof userSteps !== 'string' && userSteps !== quizSize)
         ? userSteps + 1 : 'FINAL QUESTION',
-      ended: typeof userSteps !== 'string'
+      ended: step >= quizSize,
     })
 
     callback()
@@ -59,26 +57,33 @@ class Quiz extends PureComponent {
     const quizSize = this._carousel._getCustomDataLength() - 1
     const step = this._carousel._activeItem
     const { score } = this.state
-    const localScore = score + 1
+    const ended = step === quizSize
+    const localScore = ended ? score + 1 : score
 
-    if (position === quizSize) {
-      alert(FINISH_QUIZ(localScore, quizSize))
-      this.setState({ score: localScore, ended: true })
+    if (ended) {
+      return alert(FINISH_QUIZ(step, quizSize - 1))
+      this.setState({ localScore: step })
     }
-    
-    this.setState({ score: localScore })
+
+    alert(RIGHT_ANSWER)
+    return this.setState({ score: localScore })
 
   }
 
-  noScore = () => {
+  noScore = (wrongAnswer, rightAnswer, parentScore) => {
     const quizSize = this._carousel._getCustomDataLength() - 1
     const step = this._carousel._activeItem
-    const { score } = this.state
+    const ended = step >= quizSize
 
-    if (step === quizSize) {
-      this.setState({ ended: true })
-      return alert(FINISH_QUIZ(score, quizSize))
+    if (ended) {
+      alert(WRONG_ANSWER(wrongAnswer, rightAnswer))
+
+      return setTimeout(() => {
+          alert(FINISH_QUIZ(parentScore, quizSize))
+      }, 1000)
     }
+
+    return alert(WRONG_ANSWER(wrongAnswer, rightAnswer))
   }
 
   getQuestionsCount = (step) => {
@@ -100,7 +105,6 @@ class Quiz extends PureComponent {
 
     return (
       <Question
-        {...this.state}
         {...item}
         key={index}
         position={index}
@@ -120,38 +124,53 @@ class Quiz extends PureComponent {
     const { navigation = {} } = this.props
     const { params = {} } = navigation.state
     const { questions = [], name } = params
-    const { score, step } = this.state
+    const { score, step, ended } = this.state
 
     return (
       <View style={styles.container}>
-        <View>
-          <Text style={styles.actions}>{`Answering ${this.getQuestionsCount(step)}`}</Text>
-        </View>
-        <View style={styles.carouselRow}>
-          <Carousel
-            ref={(carousel) => { this._carousel = carousel }}
-            data={questions}
-            renderItem={this.renderCarouselItem}
-            sliderWidth={width}
-            itemWidth={300}
-            customAnimationType='timing'
-            inactiveSlideScale={0.8}
-          />
-        </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        {ended &&
           <TouchableOpacity
-            style={[styles.blockButton, { backgroundColor: 'green' }]}
-            onPress={() => navigation.navigate('Quiz', { questions, name: `${name}` })}
-          >
-            <Text style={styles.actions}>{'Restart Quiz'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.blockButton, { backgroundColor: 'purple' }]}
-            onPress={() => navigation.navigate('Home')}
+             style={[styles.blockButton, { backgroundColor: 'purple' }]}
+             onPress={() => navigation.navigate('Home')}
           >
             <Text style={styles.actions}>{EXIT_QUIZ}</Text>
-          </TouchableOpacity>
-        </View>
+         </TouchableOpacity>
+        }
+        {!ended &&
+            <View style={styles.container}>
+              <View>
+                <Text style={styles.actions}>{`Answering ${this.getQuestionsCount(step)}`}</Text>
+              </View>
+              <View style={styles.carouselRow}>
+                <Carousel
+                   ended={ended}
+                  layout={'tinder'}
+                  layoutCardOffset={`9`}
+                  ref={(carousel) => { this._carousel = carousel }}
+                  data={questions}
+                  renderItem={this.renderCarouselItem}
+                  sliderWidth={width}
+                  itemWidth={300}
+                  customAnimationType='timing'
+                  inactiveSlideScale={0.8}
+              />
+             </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <TouchableOpacity
+                 style={[styles.blockButton, { backgroundColor: 'green' }]}
+                 onPress={() => navigation.navigate('Quiz', { questions, name: `${name}` })}
+               >
+                <Text style={styles.actions}>{'Restart Quiz'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.blockButton, { backgroundColor: 'purple' }]}
+                onPress={() => navigation.navigate('Home')}
+               >
+                 <Text style={styles.actions}>{EXIT_QUIZ}</Text>
+               </TouchableOpacity>
+            </View>
+         </View>
+        }
       </View>
     )
   }

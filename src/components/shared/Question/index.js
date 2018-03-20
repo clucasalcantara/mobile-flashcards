@@ -8,18 +8,17 @@ import { RIGHT_ANSWER, WRONG_ANSWER, FINISH_QUIZ} from '../../../config/constant
 
 class Question extends Component {
   state = {
-    genius: null,
+    ended: false,
     userAnswer: '',
-    localScore: 0,
   }
 
   validateAnswer = () => {
     const { animatedColor, userAnswer, localScore } = this.state
-    const { 
-      answers, 
-      rightAnswer, 
-      upScore, 
-      noScore, 
+    const {
+      answers,
+      rightAnswer,
+      upScore,
+      noScore,
       snapCard,
       position,
       quizSize,
@@ -28,31 +27,30 @@ class Question extends Component {
       questions,
       name,
     } = this.props
-    const ended = quizSize === position - 1
-    
+    const ended = position >= quizSize
+
     if (!ended) {
       if (answers[userAnswer] === rightAnswer) {
         upScore(position)
-        return snapCard(alert(RIGHT_ANSWER))
+        return snapCard()
       } else {
-        noScore(position)
-        return snapCard(alert(WRONG_ANSWER(answers[userAnswer], rightAnswer)))
-      }      
-    } 
-    
-    if (answers[userAnswer] === rightAnswer) {
-      upScore(position)
-      return snapCard(alert(RIGHT_ANSWER))
+        noScore(answers[userAnswer], rightAnswer)
+        return snapCard()
+      }
     } else {
-      noScore(position)
-      alert(WRONG_ANSWER(answers[userAnswer], rightAnswer))
-      return snapCard(alert(FINISH_QUIZ(localScore, quizSize)))
-    }      
+      if (answers[userAnswer] === rightAnswer) {
+        upScore(position, ended)
+        return snapCard()
+      } else {
+        noScore(answers[userAnswer], rightAnswer, score)
+        return snapCard()
+      }
+    }
   }
 
   render() {
     const { question, rightAnswer, answers } = this.props
-    
+
     return(
       <View style={styles.questionBox}>
         <Text style={styles.question}>{question}</Text>
@@ -73,9 +71,9 @@ class Question extends Component {
           }
         </RkChoiceGroup>
         <RkButton
-          style={[styles.blockButton, { backgroundColor: 'green' }]}
-          onPress={() => this.validateAnswer()}>
-          <Text style={styles.actions}>{'Answer!! :)'}</Text>
+              style={[styles.blockButton, { backgroundColor: 'green' }]}
+              onPress={() => this.validateAnswer()}>
+              <Text style={styles.actions}>{'Answer!! :)'}</Text>
         </RkButton>
       </View>
     )
