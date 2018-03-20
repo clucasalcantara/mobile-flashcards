@@ -33,10 +33,10 @@ class NewQuestion extends Component {
 
   addNewQuestion = async (UID, newQuestion, appDecks) => {
     const { navigation } = this.props
-    const deck = appDecks[UID - 1]
+    const deck = appDecks[UID - 1] || appDecks[UID]
 
     const oldSize = deck.questions.length
-    const { deckUID, name, questions, image } = appDecks[UID - 1]
+    const { deckUID, name, questions, image } = appDecks[UID - 1] || appDecks[UID]
 
     if (deck) {
       deck.questions.push(newQuestion)
@@ -46,9 +46,9 @@ class NewQuestion extends Component {
       const deckWithNewQuestion = deck
       const deckToUpdate = appDecks.filter(deck => deck.UID = deckUID)
       const newDecks = appDecks.filter(deck => deck.UID === UID ? deckWithNewQuestion : deck)
-      
+
       AsyncStorage.setItem('myDecks', JSON.stringify(newDecks))
-      
+
       navigation.navigate('Detail', { ...deck, UID })
     }
   }
@@ -57,7 +57,7 @@ class NewQuestion extends Component {
     const appDecks = JSON.parse(await AsyncStorage.getItem('myDecks'))
     const currentDeck = appDecks.filter(deck => UID === deck.UID)
     const newQuestion = this.addNewQuestion(UID, { question, rightAnswer, answers }, appDecks)
-    
+
     const newDeck = {
       ...currentDeck,
       newQuestion
@@ -78,7 +78,7 @@ class NewQuestion extends Component {
     const appDecks = await AsyncStorage.getItem('myDecks')
     this.setState({ appDecks: JSON.parse(appDecks) })
   }
-  
+
   addChoice = (index, choice) => {
     const { answers } = this.state
     answers[index] = choice
@@ -91,10 +91,10 @@ class NewQuestion extends Component {
     const { state } = navigation
     const { UID } = state.params
     const { isReady } = this.state
-    
+
     return (
       <View style={{ padding: 20, flex: 1, justifyContent: 'space-between' }}>
-        {!isReady && 
+        {!isReady &&
           <AppLoading
             startAsync={this._getAsyncDecks}
             onFinish={() => this.setState({ isReady })}
@@ -105,9 +105,9 @@ class NewQuestion extends Component {
           <View>
             <Text>Question: </Text>
             <TextInput
-              style={{ 
-                height: 40, 
-                borderColor: 'gray', 
+              style={{
+                height: 40,
+                borderColor: 'gray',
                 borderWidth: 1,
                 paddingLeft: 10,
               }}
@@ -118,9 +118,9 @@ class NewQuestion extends Component {
           <View style={{ marginTop: 10 }}>
             <Text>Right Answer: </Text>
             <TextInput
-              style={{ 
-                height: 40, 
-                borderColor: 'gray', 
+              style={{
+                height: 40,
+                borderColor: 'gray',
                 borderWidth: 1,
                 paddingLeft: 10,
               }}
@@ -131,9 +131,9 @@ class NewQuestion extends Component {
           <View>
             <Text>Option 1: </Text>
             <TextInput
-              style={{ 
-                height: 40, 
-                borderColor: 'gray', 
+              style={{
+                height: 40,
+                borderColor: 'gray',
                 borderWidth: 1,
                 paddingLeft: 10,
               }}
@@ -144,9 +144,9 @@ class NewQuestion extends Component {
           <View style={{ marginTop: 10 }}>
             <Text>Option 2: </Text>
             <TextInput
-              style={{ 
-                height: 40, 
-                borderColor: 'gray', 
+              style={{
+                height: 40,
+                borderColor: 'gray',
                 borderWidth: 1,
                 paddingLeft: 10,
               }}
@@ -157,9 +157,9 @@ class NewQuestion extends Component {
           <View style={{ marginTop: 10 }}>
             <Text>Option 3: </Text>
             <TextInput
-              style={{ 
-                height: 40, 
-                borderColor: 'gray', 
+              style={{
+                height: 40,
+                borderColor: 'gray',
                 borderWidth: 1,
                 paddingLeft: 10,
               }}
@@ -168,7 +168,7 @@ class NewQuestion extends Component {
             />
           </View>
         </View>
-        
+
         {typeof UID !== 'undefined' &&
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <TouchableOpacity
