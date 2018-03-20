@@ -9,6 +9,7 @@ import NewDeck from '../components/screens/NewDeck'
 import Quiz from '../components/screens/Quiz'
 import NewQuestion from '../components/screens/NewQuestion'
 import AddNewDeck from '../components/shared/AddNewDeck'
+import GoToHome from '../components/shared/GoToHome'
 
 const MainNavigator = StackNavigator({
   Home: {
@@ -23,6 +24,9 @@ const MainNavigator = StackNavigator({
   Detail: {
     screen: Detail,
     navigationOptions: ({ navigation }) => ({
+      headerLeft: (
+        <GoToHome {...navigation} />
+      ),
       title: `${navigation.state.params.name}`,
     })
   },
@@ -44,7 +48,7 @@ const MainNavigator = StackNavigator({
       title: 'Add new question',
     }
   },
-  
+
 }, {
   navigationOptions: ({ navigation }) => ({
     headerTintColor: 'white',
