@@ -57,11 +57,9 @@ class Quiz extends PureComponent {
     const ended = step === quizSize
     const localScore = score + 1
 
-    alert(`I'm at ${step} step, the quizSize is ${quizSize} and my score is ${score} ${localScore} ended status ${ended}`)
-
     if (ended) {
       return alert(FINISH_QUIZ(localScore, quizSize))
-      this.setState({ localScore: step })
+      this.setState({ localScore: localScore })
     }
 
     alert(RIGHT_ANSWER)
@@ -73,12 +71,13 @@ class Quiz extends PureComponent {
     const quizSize = this._carousel._getCustomDataLength() - 1
     const step = this._carousel._activeItem
     const ended = step >= quizSize
+    const { score } = this.state
 
     if (ended) {
       alert(WRONG_ANSWER(wrongAnswer, rightAnswer))
 
       return setTimeout(() => {
-          alert(FINISH_QUIZ(parentScore, quizSize))
+          alert(FINISH_QUIZ(score, quizSize))
       }, 1000)
     }
 
