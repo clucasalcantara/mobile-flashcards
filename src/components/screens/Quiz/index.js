@@ -29,10 +29,15 @@ class Quiz extends PureComponent {
     userAnswer: '',
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const { navigation = {} } = this.props
     const { params = {}, name } = navigation.state
     const { questions = [] } = params
+    
+    AsyncStorage.getItem('myDecks')
+      .then(storageDecks =>
+        this.setState({ decks: JSON.parse(storageDecks) })
+      )
   }
 
   snapCard = (callback = () => { }, ended) => {
@@ -118,21 +123,25 @@ class Quiz extends PureComponent {
     )
   }
 
+  navigateToDeck = (detailDeck, navigation, detailDeckUID) => navigation.navigate('Detail', { ...detailDeck, UID: detailDeckUID })
+
   render() {
     const { navigation = {} } = this.props
     const { params = {} } = navigation.state
     const { questions = [], name } = params
-    const { score, step, ended } = this.state
-
+    const { score, step, ended, decks = [] } = this.state
+    const detailDeck = decks.filter((deck, index) => deck.name === name)[0]
+    const detailDeckUID = decks.findIndex((obj) => obj.name === name)
+    
     return (
       <View style={styles.container}>
-        {ended &&
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        {ended && detailDeck &&
+          <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
               <TouchableOpacity
                  style={[styles.blockButton, { backgroundColor: 'green' }]}
-                 onPress={() => navigation.navigate('Quiz', { questions, name: `${name}` })}
+                 onPress={ () => this.navigateToDeck(detailDeck, navigation, detailDeckUID)}
                >
-                <Text style={styles.actions}>{'Restart Quiz'}</Text>
+                <Text style={styles.actions}>{`Return to ${name} deck`}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.blockButton, { backgroundColor: 'purple' }]}

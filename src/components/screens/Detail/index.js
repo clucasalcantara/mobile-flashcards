@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import {
   View,
   Text,
@@ -13,47 +13,50 @@ import { START_QUIZ, ADD_QUESTION, DEFAULT_IMAGE } from '../../../config/constan
 
 const { width } = Dimensions.get('window')
 
-const Detail = ({ navigation }) => {
-  const { UID, name, questions, image } = navigation.state.params
-  const background = image !== '' ? image : DEFAULT_IMAGE
-  
-  return (
-    <View>
-      <ImageBackground
-        resizeMode='cover'
-        style={{
-          width,
-          height: 200
-        }}
-        source={{ uri: background }}
-      />
-      <Text style={styles.deckName}>{`${name}'s Deck`}</Text>
-      <View style={styles.deckCardsCount}>
-        <Ionicons name='ios-albums-outline' size={20} />
-        <Text style={styles.deckSize}> {`${questions.length} quiz ${questions.length > 1 ? 'cards' : 'card'}`}</Text>
+class Detail extends Component {
+  render() {
+    const { navigation } = this.props
+    const { UID, name, questions = [], image } = navigation.state.params
+    const background = image !== '' ? image : DEFAULT_IMAGE
+    
+    return (
+      <View>
+        <ImageBackground
+          resizeMode='cover'
+          style={{
+            width,
+            height: 200
+          }}
+          source={{ uri: background }}
+        />
+        <Text style={styles.deckName}>{`${name}'s Deck`}</Text>
+        <View style={styles.deckCardsCount}>
+          <Ionicons name='ios-albums-outline' size={20} />
+          <Text style={styles.deckSize}> {`${questions.length} quiz ${questions.length > 1 ? 'cards' : 'card'}`}</Text>
+        </View>
+        <View style={styles.buttonsWrapper}>
+          {questions.length > 0 && <TouchableOpacity
+            style={[styles.blockButton, { backgroundColor: 'green'}]}
+            onPress={() => navigation.navigate('Quiz', { name, questions })}
+          >
+            <Text style={styles.actions}>{START_QUIZ}</Text>
+          </TouchableOpacity>}
+          {questions.length == 0 && <TouchableOpacity
+            style={[styles.blockButton, { backgroundColor: 'green' }]}
+            onPress={() => navigation.navigate('Home')}
+          >
+            <Text style={styles.actions}>{'BACK HOME'}</Text>
+          </TouchableOpacity>}
+          <TouchableOpacity
+            style={[styles.blockButton, { backgroundColor: 'purple'}]}
+            onPress={() => navigation.navigate('NewQuestion', { UID })}
+          >
+            <Text style={styles.actions}>{ADD_QUESTION}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.buttonsWrapper}>
-        {questions.length > 0 && <TouchableOpacity
-          style={[styles.blockButton, { backgroundColor: 'green'}]}
-          onPress={() => navigation.navigate('Quiz', { name, questions })}
-        >
-          <Text style={styles.actions}>{START_QUIZ}</Text>
-        </TouchableOpacity>}
-        {questions.length == 0 && <TouchableOpacity
-          style={[styles.blockButton, { backgroundColor: 'green' }]}
-          onPress={() => navigation.navigate('Home')}
-        >
-          <Text style={styles.actions}>{'BACK HOME'}</Text>
-        </TouchableOpacity>}
-        <TouchableOpacity
-          style={[styles.blockButton, { backgroundColor: 'purple'}]}
-          onPress={() => navigation.navigate('NewQuestion', { UID })}
-        >
-          <Text style={styles.actions}>{ADD_QUESTION}</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  )
+    )
+  }
 }
 
 const styles = StyleSheet.create({
