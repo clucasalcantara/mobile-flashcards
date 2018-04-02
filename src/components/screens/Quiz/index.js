@@ -33,9 +33,6 @@ class Quiz extends PureComponent {
     const { navigation = {} } = this.props
     const { params = {}, name } = navigation.state
     const { questions = [] } = params
-
-    // hijack to one question decks :P
-    if (questions.length === 1) this.setState({ ended: true })
   }
 
   snapCard = (callback = () => { }, ended) => {
@@ -58,10 +55,12 @@ class Quiz extends PureComponent {
     const step = this._carousel._activeItem
     const { score } = this.state
     const ended = step === quizSize
-    const localScore = ended ? score + 1 : score
+    const localScore = score + 1
+
+    alert(`I'm at ${step} step, the quizSize is ${quizSize} and my score is ${score} ${localScore} ended status ${ended}`)
 
     if (ended) {
-      return alert(FINISH_QUIZ(step, quizSize - 1))
+      return alert(FINISH_QUIZ(localScore, quizSize))
       this.setState({ localScore: step })
     }
 
@@ -129,12 +128,20 @@ class Quiz extends PureComponent {
     return (
       <View style={styles.container}>
         {ended &&
-          <TouchableOpacity
-             style={[styles.blockButton, { backgroundColor: 'purple' }]}
-             onPress={() => navigation.navigate('Home')}
-          >
-            <Text style={styles.actions}>{EXIT_QUIZ}</Text>
-         </TouchableOpacity>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <TouchableOpacity
+                 style={[styles.blockButton, { backgroundColor: 'green' }]}
+                 onPress={() => navigation.navigate('Quiz', { questions, name: `${name}` })}
+               >
+                <Text style={styles.actions}>{'Restart Quiz'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.blockButton, { backgroundColor: 'purple' }]}
+                onPress={() => navigation.navigate('Home')}
+               >
+                 <Text style={styles.actions}>{EXIT_QUIZ}</Text>
+               </TouchableOpacity>
+            </View>
         }
         {!ended &&
             <View style={styles.container}>
